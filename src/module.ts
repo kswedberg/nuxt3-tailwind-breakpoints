@@ -13,7 +13,7 @@ export interface ModuleOptions {
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'nuxt-tailwind-breakpoints',
+    name: 'nuxt3-tailwind-breakpoints',
     configKey: 'tailwindBreakpoints',
     compatibility: {
       // Semver version of supported nuxt versions
