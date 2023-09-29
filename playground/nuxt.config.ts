@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   tailwindBreakpoints: {
     // colorScheme: 'dark',
     // enabled: false,
+    parseRaw: true,
   },
   devtools: {enabled: true},
   postcss: {
