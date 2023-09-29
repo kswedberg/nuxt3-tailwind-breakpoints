@@ -1,0 +1,10 @@
+{
+  "root": true,
+  "extends": [
+    "@nuxt/eslint-config",
+    "kswedberg/nuxt3",
+    "kswedberg/import",
+    "kswedberg/promise"
+  ],
+  "plugins": ["vue", "import", "promise"]
+}
