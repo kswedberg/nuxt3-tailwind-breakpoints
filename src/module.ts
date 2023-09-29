@@ -28,6 +28,7 @@ export default defineNuxtModule<ModuleOptions>({
     colorScheme: 'auto',
     position: 'bottomRight',
     configPath: '~~/tailwind.config.js',
+    breakpoints: null,
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url);
