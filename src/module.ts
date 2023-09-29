@@ -9,6 +9,7 @@ export interface ModuleOptions {
   colorScheme: string;
   position: string;
   configPath: string;
+  parseRaw: boolean;
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -29,6 +30,7 @@ export default defineNuxtModule<ModuleOptions>({
     position: 'bottomRight',
     configPath: '~~/tailwind.config.js',
     breakpoints: null,
+    parseRaw: false,
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url);
@@ -56,7 +58,6 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.options.runtimeConfig.public = nuxt.options.runtimeConfig.public || {};
       nuxt.options.runtimeConfig.public.tailwindBreakpoints = options;
 
-      console.log({configPath});
       // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
       addPlugin(resolver.resolve('./runtime/plugin'));
 
