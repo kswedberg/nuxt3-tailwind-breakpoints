@@ -1,10 +1,10 @@
 <template>
   <div
     class="min-h-screen bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center"
-    :style="randomUnsplashImage"
+    :style="randomBgImage"
   >
-    <h1 class="text-white font-bold text-5xl">
-      nuxt tailwind breakpoints
+    <h1 class="hdg text-white font-bold text-5xl">
+      {{ title }}
     </h1>
     <details class="my-2 p-2 bg-white bg-opacity-75 rounded-md">
       <summary class="cursor-pointer">
@@ -21,17 +21,25 @@
 </template>
 
 <script setup>
-import {computed} from 'vue';
+import {ref, computed} from 'vue';
 import twConfig from './tailwind.config.js';
 import {useHead} from '#imports';
 
-const randomUnsplashImage = computed(() => {
+const img = `${Math.floor(Math.random() * 6)}.jpg`;
+const randomBgImage = computed(() => {
   return {
-    backgroundImage: 'url(https://source.unsplash.com/random/1600x900)',
+    backgroundImage: `url(/img/${img})`,
   };
 });
+const title = ref('Nuxt3 Tailwind Breakpoints');
 
 useHead({
-  title: 'Nuxt Tailwind Breakpoints',
+  title: title,
 });
 </script>
+<style lang="postcss" scoped>
+.hdg {
+  text-shadow: 1px 1px #000;
+}
+
+</style>
