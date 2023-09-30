@@ -7,15 +7,15 @@
 
 Show Tailwind CSS Breakpoints in your Nuxt 3 app.
 
-- [✨ &nbsp;Release Notes](/CHANGELOG.md)
-<!-- - [🏀 Online playground](https://stackblitz.com/github/kswedberg/nuxt3-tailwind-breakpoints?file=playground%2Fapp.vue) -->
+<!-- - [✨ &nbsp;Release Notes](/CHANGELOG.md) -->
+- [🏀 Online playground](https://stackblitz.com/github/kswedberg/nuxt3-tailwind-breakpoints?file=playground%2Fapp.vue)
 <!-- - [📖 &nbsp;Documentation](https://example.com) -->
 
 ## Features
 
-This module helps you create your responsive designs faster by reading the defined breakpoints within your tailwind config and showing the currently active breakpoint based on your browser window width.
+This module reads the defined breakpoints within your tailwind config and showing the currently active breakpoint based on your browser window width.
 
-The plugin will only be loaded during development mode and does not interfere with your production build (unless you set `enableInProd` to `true`).
+It will only be loaded in development mode and does not interfere with your production build (unless you set `enableInProd` to `true`).
 
 **Note**: This project started as a fork of the [nuxt-breaky](https://github.com/teamnovu/nuxt-breaky) module and now is compatible with Nuxt 3. It should look and act pretty much the same as the original. Minor changes include removing the `node-sass` dependency to make the module usable with node.js >= 16 and adding a landmark `aria-role` attribute to the `div.current-breakpoint` element.
 
