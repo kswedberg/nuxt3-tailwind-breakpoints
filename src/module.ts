@@ -35,37 +35,41 @@ export default defineNuxtModule<ModuleOptions>({
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url);
 
-    if (options.enableInProd || (process.env.NODE_ENV === 'development' && options.enabled)) {
-      const configPath = resolveAlias(options.configPath);
-      let tailwindConfig = {};
+    if (!options.enabled || (!nuxt.options.dev && !options.enableInProd)) {
+      return;
+    }
 
-      if (!options.breakpoints && existsSync(configPath)) {
+
+    const configPath = resolveAlias(options.configPath);
+    let tailwindConfig = {};
+
+    if (!options.breakpoints && existsSync(configPath)) {
         // const clearModule = require('clear-module');
 
         // clearModule(configPath);
-        tailwindConfig = requireModule(configPath);
+      tailwindConfig = requireModule(configPath);
 
         // console.log('tailwindConfig', tailwindConfig)
         // logger.info(`Merging Tailwind config from ~/${relative(this.options.srcDir, configPath)}`)
-        const resolveConfig = require('tailwindcss/resolveConfig');
-        const resolvedConfig = resolveConfig(tailwindConfig);
+      const resolveConfig = require('tailwindcss/resolveConfig');
+      const resolvedConfig = resolveConfig(tailwindConfig);
 
-        options.breakpoints = resolvedConfig.theme.screens || {};
-      } else {
-        options.breakpoints = options.breakpoints || {};
-      }
+      options.breakpoints = resolvedConfig.theme.screens || {};
+    } else {
+      options.breakpoints = options.breakpoints || {};
+    }
 
-      nuxt.options.runtimeConfig.public = nuxt.options.runtimeConfig.public || {};
-      nuxt.options.runtimeConfig.public.tailwindBreakpoints = options;
+    nuxt.options.runtimeConfig.public = nuxt.options.runtimeConfig.public || {};
+    nuxt.options.runtimeConfig.public.tailwindBreakpoints = options;
 
       // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
-      addPlugin(resolver.resolve('./runtime/plugin'));
+    addPlugin(resolver.resolve('./runtime/plugin'));
 
-      addComponent({
-        name: 'TailwindBreakpoints',
-        filePath: resolver.resolve('./runtime/components/TailwindBreakpoints'),
-      });
+    addComponent({
+      name: 'TailwindBreakpoints',
+      filePath: resolver.resolve('./runtime/components/TailwindBreakpoints'),
+    });
 
-    }
+    console.info('Using Nuxt3 Tailwind Breakpoints');
   },
 });
