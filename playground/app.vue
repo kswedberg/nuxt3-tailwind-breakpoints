@@ -3,7 +3,7 @@
     class="min-h-screen bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center"
     :style="randomBgImage"
   >
-    <h1 class="hdg text-white font-bold text-5xl">
+    <h1 class="hdg text-white text-center font-bold text-5xl">
       {{ title }}
     </h1>
     <details class="my-2 p-2 bg-white bg-opacity-75 rounded-md">
