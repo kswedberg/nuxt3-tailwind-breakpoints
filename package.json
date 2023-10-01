@@ -1,6 +1,6 @@
 {
   "name": "nuxt3-tailwind-breakpoints",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "Show Tailwind CSS Breakpoints in Nuxt 3",
   "repository": "kswedberg/nuxt3-tailwind-breakpoints",
   "license": "MIT",
