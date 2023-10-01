@@ -6,7 +6,6 @@
     :class="`color-scheme-${colorScheme}`"
   >
     <div
-      v-show="!TOGGLE_ME_TO_HIDE_BREAKY"
       @click.stop="toggleExpanded"
       @pointerdown.left="start"
       @pointerup="end"
@@ -19,10 +18,7 @@
       class="card"
       :class="[
         draggableTransitionClasses,
-        {
-          'column-reverse': currentPosition.includes('top'),
-          column: currentPosition.includes('bottom'),
-        },
+        currentPosition.includes('top') ? 'column-reverse' : 'column',
       ]"
     >
       <div ref="panelwrapper" :class="['panel-wrapper', expanded && 'panel-expanded']">
@@ -37,8 +33,7 @@
           <li
             v-for="(bp, name, index) in mappedBreakpoints"
             :key="index"
-            class="panel"
-            :class="{ translucent: selected !== index }"
+            :class="['panel', selected !== index && 'translucent']"
           >
             <span>{{ name }} </span>
             <span class="bp">{{ bp }}px</span>
@@ -111,6 +106,15 @@ export default {
       type: String,
       default: 'bottomRight',
     },
+    offset: {
+      type: Object,
+      default() {
+        return {
+          x: 32,
+          y: 24,
+        };
+      },
+    },
     colorScheme: {
       type: String,
       default: 'auto',
@@ -123,7 +127,6 @@ export default {
 
   data() {
     return {
-      TOGGLE_ME_TO_HIDE_BREAKY: false,
       expanded: false,
       noExpand: false,
       screenWidth: window.innerWidth,
@@ -161,7 +164,7 @@ export default {
     },
 
     /**
-     * Sort mapped breakpoints based on its values
+     * Sort mapped breakpoints based on their values
      */
     sortedBreakpoints() {
       return Object.keys(this.mappedBreakpoints).sort((a, b) => {
@@ -180,18 +183,14 @@ export default {
      * Get the index of the current breakpoint based on the screen width
      */
     foundBreakpoint() {
-      return this.sortedBreakpoints.findIndex(
-        (key) => this.mappedBreakpoints[key] > this.screenWidth
-      );
+      return this.sortedBreakpoints.findIndex((key) => this.mappedBreakpoints[key] > this.screenWidth);
     },
 
     /**
      * Get the index of the current active breakpoint
      */
     selected() {
-      return this.sortedBreakpoints.findIndex(
-        (bp) => bp === this.currentBreakpoint
-      );
+      return this.sortedBreakpoints.findIndex((bp) => bp === this.currentBreakpoint);
     },
 
     /**
@@ -210,18 +209,8 @@ export default {
         return this.sortedBreakpoints[this.sortedBreakpoints.length - 1];
       }
 
-      // set the found breakpoint
+      // set the current breakpoint
       return this.sortedBreakpoints[this.foundBreakpoint - 1];
-    },
-
-    /**
-     * Get the elements positioning offset
-     */
-    offset() {
-      return {
-        x: 32,
-        y: 24,
-      };
     },
 
     /**
@@ -285,7 +274,7 @@ export default {
         // get target coordinates
         const {x, y} = this[this.startingPosition];
 
-        this.updatePosition(this.$refs.breaky, x, y, w, h);
+        this.updatePosition({target: this.$refs.breaky, x, y});
       }
     },
 
@@ -300,32 +289,32 @@ export default {
     /**
      *  Update the element's position
      */
-    updatePosition(target, x, y, w, h) {
+    updatePosition({x, y, w = 0, h = 0}) {
+      const target = this.$refs.breaky;
+
       if (x > this.screenWidth / 2) {
         target.style.left = 'auto';
-        target.style.right = `${this.screenWidth - x}px`;
+        target.style.right = `${this.screenWidth - x - w / 2}px`;
       } else {
-        target.style.left = `${x}px`;
+        target.style.left = `${x - w / 2}px`;
         target.style.right = 'auto';
       }
 
       if (y > this.screenHeight / 2) {
         target.style.top = 'auto';
-        target.style.bottom = `${this.screenHeight - y}px`;
+        target.style.bottom = `${this.screenHeight - y - h / 2}px`;
       } else {
-        target.style.top = `${y}px`;
+        target.style.top = `${y - h / 2}px`;
         target.style.bottom = 'auto';
       }
     },
 
-    /**
-     *  Get the closest snapPoint to a coordinate
-     */
     start(event) {
-      this.$refs.breaky.setPointerCapture(event.pointerId);
-      this.dragging = true;
+      const target = this.$refs.breaky;
 
-      this.$refs.breaky.classList.remove(...this.draggableTransitionClasses);
+      target.setPointerCapture(event.pointerId);
+      this.toggleTransitionClass('remove');
+      this.dragging = true;
     },
     move(event) {
       // prevent from expanding and transitioning while dragging;
@@ -333,34 +322,35 @@ export default {
       // update the elements position based on its current size.
       // the size may have changed if the element has been extended before this method is called.
       // this matters if we want the element to be dragged from the center
-      this.updatePosition(
-        event.target,
-        event.pageX,
-        event.pageY,
-        event.target.clientWidth,
-        event.target.clientHeight
-      );
+      this.updatePosition({
+        x: event.pageX,
+        y: event.pageY,
+        w: event.target.clientWidth,
+        h: event.target.clientHeight,
+      });
     },
-    end(event) {
-      setTimeout(() => {
-        this.noExpand = false;
-        this.dragging = false;
-      }, 0);
-      event.target.classList.add(...this.draggableTransitionClasses);
 
+    end(event) {
+      this.dragging = false;
+      this.toggleTransitionClass('add');
       // get the closest snapPoint
       const {x, y, name} = this.getClosestSnapPoint(
         event.pageX,
         event.pageY
       );
-      const {w, h} = this.closedDimensions;
 
       this.currentPosition = name;
+      // update the element's position
+      this.updatePosition({x, y});
 
-      // update the elements position
-      this.updatePosition(event.target, x, y, w, h);
+      setTimeout(() => {
+        this.noExpand = false;
+      }, 0);
     },
 
+    /**
+     *  Get the closest snapPoint to a coordinate
+     */
     getClosestSnapPoint(x, y) {
       // get the closest snapPoints coordinates
       return this.snapPoints.reduce((closest, point, index) => {
@@ -371,12 +361,13 @@ export default {
           closest;
       }, {distance: Number.MAX_SAFE_INTEGER});
     },
-
+    toggleTransitionClass(which) {
+      this.$refs.breaky.classList[which](...this.draggableTransitionClasses);
+    },
     toggleExpanded() {
       if (this.noExpand) {
         return;
       }
-
       this.expanded = !this.expanded;
 
       const vMethod = this.expanded ? 'onOpen' : 'onClose';
@@ -397,30 +388,21 @@ export default {
       }, 0);
     },
     onOpen(element) {
-      const {width} = getComputedStyle(element);
-
       /* eslint-disable no-param-reassign */
-      // element.style.width = width;
-      // element.style.position = 'absolute';
       element.style.visibility = 'hidden';
       element.style.height = 'auto';
-      /* eslint-enable */
       const {height} = getComputedStyle(element);
 
-      /* eslint-disable no-param-reassign */
-      // element.style.width = '';
-      // element.style.position = '';
       element.style.visibility = '';
       element.style.height = 0;
-      /* eslint-enable */
-      // Force repaint to make sure the
-      // animation is triggered correctly.
+
+      // Force repaint to make sure the animation is triggered correctly.
       // eslint-disable-next-line no-unused-expressions
       getComputedStyle(element).height;
       setTimeout(() => {
-        // eslint-disable-next-line no-param-reassign
         element.style.height = height;
       });
+      /* eslint-enable */
     },
   },
 };
