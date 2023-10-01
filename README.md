@@ -7,8 +7,6 @@
 
 Show Tailwind CSS Breakpoints in your Nuxt 3 app.
 
-**Not yet ready for use.** I'm still working out issues with Interact.js when the module is published to npm.
-
 <!-- - [✨ &nbsp;Release Notes](/CHANGELOG.md) -->
 - [🏀 Online playground](https://stackblitz.com/github/kswedberg/nuxt3-tailwind-breakpoints?file=playground%2Fapp.vue)
 <!-- - [📖 &nbsp;Documentation](https://example.com) -->
