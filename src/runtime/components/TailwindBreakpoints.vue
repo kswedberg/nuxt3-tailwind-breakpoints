@@ -8,6 +8,13 @@
     <div
       v-show="!TOGGLE_ME_TO_HIDE_BREAKY"
       @click.stop="toggleExpanded"
+      @pointerdown.left="start"
+      @pointerup="end"
+      @pointercancel="end"
+      @pointermove="dragging ? move($event) : null"
+      @touchstart.prevent=""
+      @dragstart.prevent=""
+
       ref="breaky"
       class="card"
       :class="[
@@ -39,7 +46,6 @@
         </ul>
       </div>
 
-
       <div class="current-breakpoint" :class="{ 'border-opacity': !expanded }">
         <CurrentScreenIcon :screen-width="screenWidth" />
         {{ currentBreakpoint }} - {{ screenWidth }}px
@@ -49,7 +55,6 @@
 </template>
 
 <script>
-import interact from 'interactjs';
 import CurrentScreenIcon from './CurrentScreenIcon';
 
 export const throttle = function(fn, timerDelay, context) {
@@ -127,6 +132,8 @@ export default {
       draggableTransitionClasses: ['draggable-transition'],
       height: 0,
       visibility: '',
+      closedDimensions: {},
+      dragging: false,
     };
   },
 
@@ -134,6 +141,7 @@ export default {
     /**
      * Convert the breakpoints to integers and filter non-pixel values
      * example: 1024px => 1024
+     * example with {parseRaw: true}: {raw: 'print, (min-width: 1024px)}' => 1024
      */
     mappedBreakpoints() {
       return Object.entries(this.breakpoints).reduce((obj, [key, val]) => {
@@ -250,11 +258,15 @@ export default {
 
   mounted() {
     this.resizeHandler();
+    this.closedDimensions = {
+      w: this.$refs.breaky.clientWidth,
+      h: this.$refs.breaky.clientHeight,
+    };
 
     window.addEventListener('resize', this.resizeHandler);
 
     this.applyStartingPosition();
-    this.initInteract();
+    // this.initInteract();
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.resizeHandler);
@@ -265,6 +277,7 @@ export default {
      *  Apply the starting position passed through as a prop
      */
     applyStartingPosition() {
+      // startingPosition is bottomLeft | bottomRight | topLeft | topRight
       if (typeof this[this.startingPosition] === 'object') {
         // get the elements size
         const w = this.$refs.breaky.clientWidth;
@@ -308,6 +321,46 @@ export default {
     /**
      *  Get the closest snapPoint to a coordinate
      */
+    start(event) {
+      this.$refs.breaky.setPointerCapture(event.pointerId);
+      this.dragging = true;
+
+      this.$refs.breaky.classList.remove(...this.draggableTransitionClasses);
+    },
+    move(event) {
+      // prevent from expanding and transitioning while dragging;
+      this.noExpand = true;
+      // update the elements position based on its current size.
+      // the size may have changed if the element has been extended before this method is called.
+      // this matters if we want the element to be dragged from the center
+      this.updatePosition(
+        event.target,
+        event.pageX,
+        event.pageY,
+        event.target.clientWidth,
+        event.target.clientHeight
+      );
+    },
+    end(event) {
+      setTimeout(() => {
+        this.noExpand = false;
+        this.dragging = false;
+      }, 0);
+      event.target.classList.add(...this.draggableTransitionClasses);
+
+      // get the closest snapPoint
+      const {x, y, name} = this.getClosestSnapPoint(
+        event.pageX,
+        event.pageY
+      );
+      const {w, h} = this.closedDimensions;
+
+      this.currentPosition = name;
+
+      // update the elements position
+      this.updatePosition(event.target, x, y, w, h);
+    },
+
     getClosestSnapPoint(x, y) {
       // get the closest snapPoints coordinates
       return this.snapPoints.reduce((closest, point, index) => {
@@ -319,54 +372,6 @@ export default {
       }, {distance: Number.MAX_SAFE_INTEGER});
     },
 
-    /**
-     *  Initialize the element to be draggable
-     */
-    initInteract() {
-      // get size of element
-      const w = this.$refs.breaky.clientWidth;
-      const h = this.$refs.breaky.clientHeight;
-
-      interact(this.$refs.breaky).draggable({
-        onstart: (event) => {
-          // prevent from expanding and transitioning while dragging
-          this.noExpand = true;
-          event.target.classList.remove(...this.draggableTransitionClasses);
-        },
-
-        onend: (event) => {
-          // allow to expand and transition again
-          setTimeout(() => {
-            this.noExpand = false;
-          }, 0);
-          event.target.classList.add(...this.draggableTransitionClasses);
-
-          // get the closest snapPoint
-          const {x, y, name} = this.getClosestSnapPoint(
-            event.pageX,
-            event.pageY
-          );
-
-          this.currentPosition = name;
-
-          // update the elements position
-          this.updatePosition(event.target, x, y, w, h);
-        },
-
-        onmove: (event) => {
-          // update the elements position based on its current size.
-          // the size may have changed if the element has been extended before this method is called.
-          // this matters if we want the element to be dragged from the center
-          this.updatePosition(
-            event.target,
-            event.pageX,
-            event.pageY,
-            event.target.clientWidth,
-            event.target.clientHeight
-          );
-        },
-      });
-    },
     toggleExpanded() {
       if (this.noExpand) {
         return;
