@@ -12,7 +12,7 @@
       </summary>
       <div>
         <div class="text-sm my-2">
-          * Note: for this example, the options in nuxt.config are <code>{parseRaw: true}</code>
+          * Note: for this demo, the options in nuxt.config are <code>{parseRaw: true}</code>
         </div>
         <pre>{{ twConfig.theme.screens }}</pre>
       </div>
