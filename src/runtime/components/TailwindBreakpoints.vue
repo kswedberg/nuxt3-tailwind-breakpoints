@@ -409,9 +409,44 @@ export default {
 </script>
 
 <style lang="postcss">
-@import '../css/custom-props.css';
-
 .tailwind-breakpoints {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+
+  .card {
+    --color-scheme-light-bg: rgba(255, 255, 255, 0.8);
+    --color-scheme-light-bg-selected: rgba(0, 0, 0, 0.15);
+    --color-scheme-light-text: #111;
+    --color-scheme-light-border: rgba(0, 0, 0, 0.1);
+    --color-scheme-light-svg-color: rgba(0, 0, 0, 0.4);
+
+    --color-scheme-dark-bg: rgba(0, 0, 0, 0.8);
+    --color-scheme-dark-bg-selected: rgba(255, 255, 255, 0.2);
+    --color-scheme-dark-text: #f8f8f8;
+    --color-scheme-dark-border: rgba(255, 255, 255, 0.3);
+    --color-scheme-dark-svg-color: rgba(255, 255, 255, 0.3);
+
+    font-size: 0.75rem;
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+      var(--tw-ring-shadow, 0 0 #0000), 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+      0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    line-height: 1.5;
+    position: fixed;
+    display: flex;
+    padding: 0.5rem;
+    z-index: 50;
+    cursor: pointer;
+    font-weight: bold;
+    min-width: 170px;
+    border-radius: 1.75rem;
+    animation: fadeIn 0.25s forwards;
+    letter-spacing: 0.025em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: none;
+    user-select: none;
+  }
+
   &.color-scheme-auto {
     /* Light mode */
     @media (prefers-color-scheme: light) {
@@ -460,7 +495,7 @@ export default {
       color: var(--color-scheme-light-text);
     }
 
-    & .border-opacity-30 {
+    & .border-opacity {
       border-color: var(--color-scheme-light-border);
     }
 
@@ -479,7 +514,7 @@ export default {
       color: var(--color-scheme-dark-text);
     }
 
-    & .border-opacity-30 {
+    & .border-opacity {
       border-color: var(--color-scheme-dark-border);
     }
 
@@ -492,39 +527,6 @@ export default {
     }
   }
 
-  .tailwind-breakpoints {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-      'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
-      'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  }
-
-  @media print {
-    .tailwind-breakpoints {
-      display: none;
-    }
-  }
-
-  .card {
-    font-size: 0.75rem;
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
-      var(--tw-ring-shadow, 0 0 #0000), 0 1px 3px 0 rgba(0, 0, 0, 0.1),
-      0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    line-height: 1.5;
-    position: fixed;
-    display: flex;
-    padding: 0.5rem;
-    z-index: 50;
-    cursor: pointer;
-    font-weight: bold;
-    min-width: 170px;
-    border-radius: 1.75rem;
-    animation: fadeIn 0.25s forwards;
-    letter-spacing: 0.025em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    touch-action: none;
-    user-select: none;
-  }
 
   .column {
     flex-direction: column;
@@ -578,8 +580,7 @@ export default {
   .current-breakpoint {
     display: flex;
     width: 100%;
-    transition-property: background-color, border-color, color, fill, stroke,
-      opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-property: border-color;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
     text-align: center;
@@ -600,7 +601,6 @@ export default {
     transition-duration: 300ms;
   }
 
-
   /* */
 
   @keyframes fadeIn {
@@ -614,6 +614,14 @@ export default {
 
   .h-selected {
     height: 34px;
+  }
+}
+
+/* Hide when printing */
+
+@media print {
+  .tailwind-breakpoints {
+    display: none;
   }
 }
 </style>
