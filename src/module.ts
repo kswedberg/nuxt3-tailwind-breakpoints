@@ -1,4 +1,3 @@
-import {fileURLToPath} from 'url';
 import {existsSync} from 'fs';
 import {defineNuxtModule, addPlugin, addComponent, createResolver, resolveAlias, requireModule} from '@nuxt/kit';
 
@@ -37,11 +36,6 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (!options.enabled || (!nuxt.options.dev && !options.enableInProd)) {
       return;
-    }
-    nuxt.options.build.transpile = nuxt.options.build.transpile || [];
-
-    if (!nuxt.options.build.transpile.includes('interactjs')) {
-      nuxt.options.build.transpile.push('interactjs');
     }
 
     const configPath = resolveAlias(options.configPath);
