@@ -17,6 +17,15 @@
   "files": [
     "dist"
   ],
+  "keywords": [
+    "nuxt",
+    "nuxt3",
+    "tailwind",
+    "tailwindcss",
+    "module",
+    "breakpoints",
+    "responsive design"
+  ],
   "scripts": {
     "prepack": "nuxt-module-build build",
     "dev": "cd playground && nuxi dev",
