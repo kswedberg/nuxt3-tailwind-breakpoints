@@ -5,9 +5,14 @@ import {defineNuxtPlugin, useRuntimeConfig} from '#app';
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();
-
-  const twb = createApp({extends: TailwindBreakpoints}, {
-    ...config.public.tailwindBreakpoints,
+  const twbConfig = config.public.tailwindBreakpoints || {};
+  const twb = createApp({
+    extends: TailwindBreakpoints,
+    devtools: {
+      hide: true,
+    },
+  }, {
+    ...twbConfig,
   });
 
   if (typeof document !== 'undefined' && document.createElement) {
