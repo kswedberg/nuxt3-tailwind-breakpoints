@@ -437,7 +437,7 @@ export default {
     z-index: 50;
     cursor: pointer;
     font-weight: bold;
-    min-width: 170px;
+    min-width: 150px;
     border-radius: 1.75rem;
     animation: fadeIn 0.25s forwards;
     letter-spacing: 0.025em;
@@ -586,8 +586,8 @@ export default {
     text-align: center;
     align-items: center;
     justify-content: space-around;
-    border: 2px solid transparent;
-    padding: 0.5rem 1rem;
+    border: 1px solid transparent;
+    padding: 0.4rem;
     border-radius: 9999px;
   }
 
