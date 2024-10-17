@@ -102,7 +102,7 @@ export default {
       type: Object,
       required: true,
     },
-    startingPosition: {
+    position: {
       type: String,
       default: 'bottomRight',
     },
@@ -131,7 +131,7 @@ export default {
       noExpand: false,
       screenWidth: window.innerWidth,
       screenHeight: window.innerHeight,
-      currentPosition: this.startingPosition,
+      currentPosition: this.position,
       draggableTransitionClasses: ['draggable-transition'],
       height: 0,
       visibility: '',
@@ -266,13 +266,13 @@ export default {
      *  Apply the starting position passed through as a prop
      */
     applyStartingPosition() {
-      // startingPosition is bottomLeft | bottomRight | topLeft | topRight
-      if (typeof this[this.startingPosition] === 'object') {
-        // get the elements size
+      // position is bottomLeft | bottomRight | topLeft | topRight
+      if (typeof this[this.position] === 'object') {
+        // get the element's size
         const w = this.$refs.breaky.clientWidth;
         const h = this.$refs.breaky.clientHeight;
         // get target coordinates
-        const {x, y} = this[this.startingPosition];
+        const {x, y} = this[this.position];
 
         this.updatePosition({target: this.$refs.breaky, x, y});
       }
@@ -319,7 +319,7 @@ export default {
     move(event) {
       // prevent from expanding and transitioning while dragging;
       this.noExpand = true;
-      // update the elements position based on its current size.
+      // update the element's position based on its current size.
       // the size may have changed if the element has been extended before this method is called.
       // this matters if we want the element to be dragged from the center
       this.updatePosition({
@@ -433,7 +433,7 @@ export default {
     line-height: 1.5;
     position: fixed;
     display: flex;
-    padding: 0.5rem;
+    padding: 0.25rem;
     z-index: 50;
     cursor: pointer;
     font-weight: bold;
