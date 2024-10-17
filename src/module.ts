@@ -9,6 +9,10 @@ export interface ModuleOptions {
   position: string;
   configPath: string;
   parseRaw: boolean;
+  offset: {
+    x: number;
+    y: number;
+  };
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -30,6 +34,10 @@ export default defineNuxtModule<ModuleOptions>({
     configPath: '~~/tailwind.config.js',
     breakpoints: null,
     parseRaw: false,
+    offset: {
+      x: 10,
+      y: 10,
+    },
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url);
