@@ -8,13 +8,13 @@
     </h1>
     <details class="my-2 p-2 bg-white bg-opacity-75 rounded-md">
       <summary class="cursor-pointer">
-        Breakpoints from <code>theme.screens</code> in tailwind.config.js:
+        Options in nuxt.config for this demo, along with defaults:
       </summary>
-      <div>
+      <div class="pt-2">
+        * Includes breakpoints from <code>theme.screens</code> in the `tailwind.config.js` file:
         <div class="text-sm my-2">
-          * Note: for this demo, the options in nuxt.config are <code>{parseRaw: true}</code>
+          <pre><code>{{ config.public.tailwindBreakpoints }}</code></pre>
         </div>
-        <pre>{{ twConfig.theme.screens }}</pre>
       </div>
     </details>
   </div>
@@ -22,8 +22,10 @@
 
 <script setup>
 import {ref, computed} from 'vue';
-import twConfig from './tailwind.config.js';
 import {useHead} from '#imports';
+import {useRuntimeConfig} from '#app';
+
+const config = useRuntimeConfig();
 
 const img = `${Math.floor(Math.random() * 6)}.jpg`;
 const randomBgImage = computed(() => {
